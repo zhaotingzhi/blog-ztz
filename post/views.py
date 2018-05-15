@@ -40,4 +40,33 @@ def get_post_by_id(postid):
 def post_view(request, postid):
     post = get_post_by_id(postid)
 
-    return render(request,'detail.html',{'post':post})
+    return render(request, 'detail.html', {'post': post})
+
+
+def cate_view(request, cateid):
+    cate_posts = Post.objects.filter(category_id=cateid).order_by('-created')
+
+    return render(request, 'archive.html', {'archive_posts': cate_posts})
+
+
+def archive_view(request, year=None, month=None):
+    if year and month:
+        arch_posts = Post.objects.filter(created__year=year, created__month=month).order_by('-created')
+    else:
+        arch_posts = Post.objects.order_by('-created')
+    return render(request, 'archive.html', {'arch_posts': arch_posts})
+
+
+def aboutme_view(request):
+    return render(request, 'aboutme.html')
+
+
+def search_view(request):
+    from haystack.query import SearchQuerySet
+    from haystack.query import SQ
+    keywords = request.GET.get('q', '')
+    search_posts = SearchQuerySet().filter(SQ(title=keywords) | SQ(content=keywords))
+    s_posts = []
+    for s_p in search_posts:
+        s_posts.append(s_p.object)
+    return render(request, 'archive.html', {'arch_posts': s_posts})

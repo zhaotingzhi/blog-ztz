@@ -36,7 +36,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'post',
+    'haystack'
 ]
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -62,6 +64,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'post.contextprocessors.getrightinfo'
             ],
         },
     },
@@ -118,3 +121,18 @@ STATIC_URL = '/static/'
 # global_settings
 
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+
+
+# 指定生成的索引路径
+HAYSTACK_CONNECTIONS = {
+        'default': {
+            'ENGINE': 'post.whoosh_cn_backend.WhooshEngine',
+            'PATH': os.path.join(BASE_DIR, 'whoosh_index'),
+        },
+    }
+
+
+
+
+# 实时生成索引文件
+HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
